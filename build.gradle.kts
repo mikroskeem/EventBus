@@ -14,6 +14,7 @@ buildscript {
 plugins {
     kotlin("jvm") version "1.2.50"
     id("net.minecrell.licenser") version "0.3"
+    `maven-publish`
 }
 
 apply {
@@ -71,6 +72,20 @@ configure<JUnitPlatformExtension> {
     filters {
         engines {
             include("spek")
+        }
+    }
+}
+
+val sourceJar by tasks.creating(Jar::class) {
+    classifier = "sources"
+    from(java.sourceSets["main"].allJava)
+}
+
+publishing {
+    (publications) {
+        "maven"(MavenPublication::class) {
+            from(components["java"])
+            artifact(sourceJar)
         }
     }
 }
