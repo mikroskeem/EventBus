@@ -21,7 +21,7 @@ apply {
 }
 
 group = "eu.mikroskeem"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1"
 
 val asmVersion = "6.2"
 val spekVersion = "1.1.5"
