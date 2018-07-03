@@ -14,3 +14,17 @@ Speed.
 ## Limitations
 
 Listener methods cannot be static/non-public. Only methods found from class of given instance will be used.
+
+## Repository
+
+```kotlin
+val eventBusVersion = "0.0.1"
+
+repositories {
+    maven("https://jitpack.io")
+}
+
+dependencies {
+    implementation("com.github.mikroskeem:EventBus:$eventBusVersion")
+}
+```
