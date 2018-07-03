@@ -25,8 +25,6 @@
 
 package eu.mikroskeem.eventbus
 
-import eu.mikroskeem.eventbus.annotations.Priority
-
 /**
  * Event executor interface
  */
@@ -34,7 +32,7 @@ interface EventExecutor<E: Any, L: Any>: Comparable<EventExecutor<*, *>> {
     /**
      * Executor priority
      */
-    val priority: Priority
+    val priority: Int
 
     /**
      * Event firing method

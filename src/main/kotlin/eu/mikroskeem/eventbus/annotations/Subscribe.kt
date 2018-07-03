@@ -25,21 +25,17 @@
 
 package eu.mikroskeem.eventbus.annotations
 
-import eu.mikroskeem.eventbus.annotations.Priority.NORMAL
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.FUNCTION
 
+/**
+ * Event bus listener function annotation.
+ */
 @Retention(RUNTIME)
 @Target(FUNCTION)
 annotation class Subscribe(
-        val priority: Priority = NORMAL
+        /**
+         * Listener priority.
+         */
+        val priority: Int = 0
 )
-
-enum class Priority {
-    LOWEST,
-    LOW,
-    NORMAL,
-    HIGH,
-    HIGHEST,
-    MONITOR
-}
