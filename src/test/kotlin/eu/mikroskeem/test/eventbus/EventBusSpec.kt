@@ -30,6 +30,7 @@ import eu.mikroskeem.eventbus.newEventBus
 import eu.mikroskeem.test.eventbus.events.SimpleEvent
 import eu.mikroskeem.test.eventbus.interfaces.Event
 import eu.mikroskeem.test.eventbus.interfaces.Listener
+import eu.mikroskeem.test.eventbus.listeners.FaultyListener
 import eu.mikroskeem.test.eventbus.listeners.SimpleListener
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
@@ -44,6 +45,7 @@ object EventBusSpec: Spek({
     given("an event bus instance") {
         val eventBus: EventBus<Event, Listener> = newEventBus()
         val listener = SimpleListener()
+        val faultyListener = FaultyListener()
 
         on("simple listener registration") {
             it("should register successfully") {
@@ -78,6 +80,24 @@ object EventBusSpec: Spek({
 
             it("should've passed without any listeners mutating it") {
                 assert(event.firedCount == 1) { "event.firedCount == 1" }
+            }
+        }
+
+        on("faulity listener registration") {
+            it("should register successfully") {
+                eventBus.registerListener(faultyListener)
+            }
+        }
+
+        on("simple event fire after listener registration") {
+            val event = SimpleEvent()
+
+            it("first handler should fail and second should handle successfully") {
+                eventBus.callEvent(event)
+            }
+
+            it("should've passed one listener") {
+                assert(event.firedCount == 1) { "event.firedCount != 1" }
             }
         }
     }
