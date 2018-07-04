@@ -52,6 +52,4 @@ interface EventExecutor<E: Any, L: Any>: Comparable<EventExecutor<*, *>> {
      * Listener target method owner class
      */
     val owningClass: Class<L>
-
-    override fun compareTo(other: EventExecutor<*, *>): Int = priority.compareTo(other.priority)
 }

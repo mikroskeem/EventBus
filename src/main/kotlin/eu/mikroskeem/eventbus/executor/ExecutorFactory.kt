@@ -35,7 +35,9 @@ import org.objectweb.asm.Opcodes.ALOAD
 import org.objectweb.asm.Opcodes.ARETURN
 import org.objectweb.asm.Opcodes.CHECKCAST
 import org.objectweb.asm.Opcodes.GETFIELD
+import org.objectweb.asm.Opcodes.INVOKEINTERFACE
 import org.objectweb.asm.Opcodes.INVOKESPECIAL
+import org.objectweb.asm.Opcodes.INVOKESTATIC
 import org.objectweb.asm.Opcodes.INVOKEVIRTUAL
 import org.objectweb.asm.Opcodes.IRETURN
 import org.objectweb.asm.Opcodes.PUTFIELD
@@ -147,6 +149,18 @@ private fun <E: Any, L: Any> newClassBasedExecutor(loader: GeneratedClassLoader,
     fireMethod.visitInsn(RETURN)
     fireMethod.visitMaxs(0, 0)
     fireMethod.visitEnd()
+
+    // ** Implement compareTo(Ljava/lang/Object;)I
+    val compareToMethod = writer.visitMethod(ACC_PUBLIC, "compareTo", "(Ljava/lang/Object;)I", null, null)
+    compareToMethod.visitVarInsn(ALOAD, 0)
+    compareToMethod.visitFieldInsn(GETFIELD, internalName, "priority", "I")
+    compareToMethod.visitVarInsn(ALOAD, 1)
+    compareToMethod.visitTypeInsn(CHECKCAST, "eu/mikroskeem/eventbus/EventExecutor")
+    compareToMethod.visitMethodInsn(INVOKEINTERFACE, "eu/mikroskeem/eventbus/EventExecutor", "getPriority", "()I", true)
+    compareToMethod.visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "compare", "(II)I", false)
+    compareToMethod.visitInsn(IRETURN)
+    compareToMethod.visitMaxs(0, 0)
+    compareToMethod.visitEnd()
 
     // Load class and construct it
     return loader.defineClass<EventExecutor<E, L>>(className, writer.toByteArray())
