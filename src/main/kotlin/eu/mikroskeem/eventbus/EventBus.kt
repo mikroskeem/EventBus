@@ -28,6 +28,7 @@ package eu.mikroskeem.eventbus
 import eu.mikroskeem.eventbus.EventBus.Builder
 import eu.mikroskeem.eventbus.annotations.Subscribe
 import eu.mikroskeem.eventbus.executor.ExecutorFactory
+import org.slf4j.LoggerFactory
 import java.lang.reflect.Modifier
 import java.lang.reflect.Modifier.isPublic
 import java.lang.reflect.Modifier.isStatic
@@ -41,6 +42,7 @@ import kotlin.reflect.KClass
  * @param listenerInterface A listener interface
  */
 class EventBus<E: Any, L: Any> internal constructor(val eventInterface: Class<E>, val listenerInterface: Class<L>) {
+    private val logger = LoggerFactory.getLogger(EventBus::class.java)
     private val listeners: MutableMap<Class<E>, MutableList<EventExecutor<E, L>>> = ConcurrentHashMap()
     private val factory: ExecutorFactory<E, L> = ExecutorFactory()
 
@@ -94,7 +96,18 @@ class EventBus<E: Any, L: Any> internal constructor(val eventInterface: Class<E>
      * @param event An event to pass through all the listeners
      * @return Given event instance, for chaining
      */
-    fun callEvent(event: E): E = event.also { listeners[event::class.java]?.forEach { it.fire(event) } }
+    fun callEvent(event: E): E = event.also {
+        listeners[event::class.java]?.forEach {
+            try {
+                it.fire(event)
+            } catch (t: Throwable) {
+                // Log the exception
+                if(logger.isWarnEnabled)
+                    logger.warn("Failed to pass event ${event::class.className} to " +
+                            "${it.owningClass.className}::${it.targetMethod.name}", t)
+            }
+        }
+    }
 
     /**
      * Event bus builder
@@ -156,3 +169,6 @@ inline fun <reified E: Any, reified L: Any> newEventBus(): EventBus<E, L> {
             .setListenerInterface(L::class)
             .build()
 }
+
+private val Class<*>.className: String get() = this.name.run { substring(lastIndexOf(".")) }
+private val KClass<*>.className: String get() = this.java.className

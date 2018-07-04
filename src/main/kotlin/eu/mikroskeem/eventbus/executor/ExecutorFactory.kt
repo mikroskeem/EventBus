@@ -86,8 +86,11 @@ private fun <E: Any, L: Any> newClassBasedExecutor(loader: GeneratedClassLoader,
     // Field to contain priority
     writer.visitField(ACC_PRIVATE, "priority", "I", null, handlerInfo.priority).visitEnd()
 
+    // Field to contain target method
+    writer.visitField(ACC_PRIVATE, "target", "Ljava/lang/reflect/Method;", null, null).visitEnd()
+
     // ** Define constructor
-    val ctor = writer.visitMethod(ACC_PUBLIC, "<init>", "(Ljava/lang/Object;)V", null, null)
+    val ctor = writer.visitMethod(ACC_PUBLIC, "<init>", "(Ljava/lang/Object;Ljava/lang/reflect/Method;)V", null, null)
 
     // Call super
     ctor.visitVarInsn(ALOAD, 0)
@@ -97,6 +100,11 @@ private fun <E: Any, L: Any> newClassBasedExecutor(loader: GeneratedClassLoader,
     ctor.visitVarInsn(ALOAD, 0)
     ctor.visitVarInsn(ALOAD, 1)
     ctor.visitFieldInsn(PUTFIELD, internalName, "inst", "Ljava/lang/Object;")
+
+    // Store target method reference
+    ctor.visitVarInsn(ALOAD, 0)
+    ctor.visitVarInsn(ALOAD, 2)
+    ctor.visitFieldInsn(PUTFIELD, internalName, "target", "Ljava/lang/reflect/Method;")
 
     ctor.visitInsn(RETURN)
     ctor.visitMaxs(0, 0)
@@ -119,6 +127,14 @@ private fun <E: Any, L: Any> newClassBasedExecutor(loader: GeneratedClassLoader,
     getOwningClassMethod.visitMaxs(0, 0)
     getOwningClassMethod.visitEnd()
 
+    // ** Implement getTargetMethod()Ljava/lang/reflect/Method;
+    val getTargetMethod = writer.visitMethod(ACC_PUBLIC, "getTargetMethod", "()Ljava/lang/reflect/Method;", null, null)
+    getTargetMethod.visitVarInsn(ALOAD, 0)
+    getTargetMethod.visitFieldInsn(GETFIELD, internalName, "target", "Ljava/lang/reflect/Method;")
+    getTargetMethod.visitInsn(ARETURN)
+    getTargetMethod.visitMaxs(0, 0)
+    getTargetMethod.visitEnd()
+
     // ** Implement fire(Ljava/lang/Object;)V method
     val fireMethod = writer.visitMethod(ACC_PUBLIC, "fire", "(Ljava/lang/Object;)V", null, null)
     fireMethod.visitVarInsn(ALOAD, 0)
@@ -134,6 +150,6 @@ private fun <E: Any, L: Any> newClassBasedExecutor(loader: GeneratedClassLoader,
 
     // Load class and construct it
     return loader.defineClass<EventExecutor<E, L>>(className, writer.toByteArray())
-            .getConstructor(Any::class.java).apply { isAccessible = true }
-            .newInstance(listener)
+            .getConstructor(Any::class.java, Method::class.java).apply { isAccessible = true }
+            .newInstance(listener, executorMethod)
 }

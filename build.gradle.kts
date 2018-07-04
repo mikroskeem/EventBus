@@ -26,6 +26,7 @@ version = "0.0.1"
 
 val asmVersion = "6.2"
 val spekVersion = "1.1.5"
+val slf4jVersion = "1.8.0-beta2"
 
 repositories {
     mavenCentral()
@@ -34,6 +35,7 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.ow2.asm:asm:$asmVersion")
+    implementation("org.slf4j:slf4j-api:$slf4jVersion")
 
     testImplementation("org.jetbrains.spek:spek-api:$spekVersion") {
         exclude(group = "org.jetbrains.kotlin")
@@ -42,6 +44,7 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
     testRuntime(kotlin("reflect"))
+    testRuntime("org.slf4j:slf4j-simple:$slf4jVersion")
 }
 
 tasks.withType<KotlinCompile> {

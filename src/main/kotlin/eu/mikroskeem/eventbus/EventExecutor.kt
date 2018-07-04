@@ -25,6 +25,8 @@
 
 package eu.mikroskeem.eventbus
 
+import java.lang.reflect.Method
+
 /**
  * Event executor interface
  */
@@ -40,6 +42,11 @@ interface EventExecutor<E: Any, L: Any>: Comparable<EventExecutor<*, *>> {
      * @param event An event to fire
      */
     fun fire(event: E)
+
+    /**
+     * Listener target method
+     */
+    val targetMethod: Method
 
     /**
      * Listener target method owner class
