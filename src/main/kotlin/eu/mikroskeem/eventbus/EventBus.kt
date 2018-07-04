@@ -169,5 +169,5 @@ inline fun <reified E: Any, reified L: Any> newEventBus(): EventBus<E, L> {
             .build()
 }
 
-private val Class<*>.className: String get() = this.name.run { substring(lastIndexOf(".")) }
+private val Class<*>.className: String get() = this.name.run { substring(lastIndexOf(".") + 1) }
 private val KClass<*>.className: String get() = this.java.className
