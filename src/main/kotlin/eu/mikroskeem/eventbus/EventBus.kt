@@ -29,7 +29,6 @@ import eu.mikroskeem.eventbus.EventBus.Builder
 import eu.mikroskeem.eventbus.annotations.Subscribe
 import eu.mikroskeem.eventbus.executor.ExecutorFactory
 import org.slf4j.LoggerFactory
-import java.lang.reflect.Modifier
 import java.lang.reflect.Modifier.isPublic
 import java.lang.reflect.Modifier.isStatic
 import java.util.concurrent.ConcurrentHashMap

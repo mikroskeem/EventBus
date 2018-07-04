@@ -45,7 +45,6 @@ import org.objectweb.asm.Opcodes.RETURN
 import org.objectweb.asm.Opcodes.V1_8
 import org.objectweb.asm.Type
 import java.lang.reflect.Method
-import java.lang.reflect.Modifier
 import java.util.WeakHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -144,8 +143,7 @@ private fun <E: Any, L: Any> newClassBasedExecutor(loader: GeneratedClassLoader,
     fireMethod.visitTypeInsn(CHECKCAST, methodOwnerClassInternal)
     fireMethod.visitVarInsn(ALOAD, 1)
     fireMethod.visitTypeInsn(CHECKCAST, eventClassNameInternal)
-    fireMethod.visitMethodInsn(INVOKEVIRTUAL, methodOwnerClassInternal, executorMethod.name, "(${Type.getDescriptor(eventClass)})V",
-            Modifier.isInterface(executorMethod.modifiers))
+    fireMethod.visitMethodInsn(INVOKEVIRTUAL, methodOwnerClassInternal, executorMethod.name, "(${Type.getDescriptor(eventClass)})V", false)
     fireMethod.visitInsn(RETURN)
     fireMethod.visitMaxs(0, 0)
     fireMethod.visitEnd()
