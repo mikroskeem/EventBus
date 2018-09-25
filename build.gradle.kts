@@ -12,7 +12,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version "1.2.50"
+    kotlin("jvm") version "1.2.71"
     id("net.minecrell.licenser") version "0.3"
     `maven-publish`
 }
@@ -81,20 +81,20 @@ configure<JUnitPlatformExtension> {
 
 val sourceJar by tasks.creating(Jar::class) {
     classifier = "sources"
-    from(java.sourceSets["main"].allJava)
+    from(sourceSets["main"].allJava)
 }
 
 publishing {
     (publications) {
-        "maven"(MavenPublication::class) {
+        create("maven", MavenPublication::class) {
             from(components["java"])
             artifact(sourceJar)
         }
     }
 }
 
-val wrapper by tasks.getting(Wrapper::class) {
-    gradleVersion = "4.8"
+val wrapper by tasks.creating(Wrapper::class) {
+    gradleVersion = "4.10.1"
 }
 
 // extension for configuration
